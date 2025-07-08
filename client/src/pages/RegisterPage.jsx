@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -18,27 +19,29 @@ export default function RegisterPage() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, username, password }),
+      const res = await axios.post('http://localhost:5001/api/auth/register', {
+        email,
+        username,
+        password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true // include this only if your backend uses cookies or sessions
       });
 
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
-        setError(data.error || 'Registration failed');
-        return;
-      }
-
-      // Store token and user in localStorage
+      // Store token and user
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
       // Redirect to dashboard
       navigate('/dashboard');
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      const msg = err.response?.data?.error || 'Registration failed. Please try again.';
+      setError(msg);
+      console.error(msg);
     }
   };
 

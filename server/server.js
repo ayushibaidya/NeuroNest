@@ -1,34 +1,39 @@
-import express from 'express'
-import dotenv from 'dotenv'
-import mongoose from 'mongoose'
-import cors from 'cors'
-import authRoutes from './routes/authRoutes.js'
-// import moodLogRoutes from './routes/moodLogRoutes.js'
-// import taskRoutes from './routes/taskRoutes.js'
+import express from 'express';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import cors from 'cors';
 
-dotenv.config()
+import authRoutes from './routes/authRoutes.js';
+import moodLogRoutes from './routes/moodLogRoutes.js';
+import taskRoutes from './routes/taskRoutes.js';
 
-const app = express(); 
-const PORT = process.env.PORT || 5000; 
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5001;
+const MONGO_URI = process.env.MONGO_URI;
+
+// ✅ CORRECT CORS SETUP
 app.use(cors({
   origin: 'http://localhost:5173',
-  credentials: true
-})); 
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
-app.use('/api/auth', authRoutes); 
-// app.use('/api/mood', moodLogRoutes); 
-// app.use('/api/tasks', taskRoutes);
+// ✅ Your API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/mood', moodLogRoutes);
+app.use('/api/tasks', taskRoutes);
 
-app.get('/', (req, res) => {
-    res.send("NeuroNest backend running with ESM!");
-}); 
-
-//connect to mongoDB
-mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-    console.log("Connected to MongoDB"); 
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 
-}).catch((error) => {
-     console.error("MongoDB connection error:", error.message);
-});
+// ✅ MongoDB Connection
+mongoose.connect(MONGO_URI)
+  .then(() => {
+    console.log("✅ Connected to MongoDB");
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+  })
+  .catch((error) => {
+    console.error("❌ MongoDB connection error:", error.message);
+  });
