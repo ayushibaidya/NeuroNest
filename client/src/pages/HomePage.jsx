@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Navbar from '../components/Navbar.jsx';
 
 export default function HomePage() {
   const facts = [
@@ -11,33 +11,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lightSkyBlue-500 to-pinkLavender-500 text-white font-sans">
-      <header className="flex justify-between items-center px-6 py-4 shadow-md bg-prussianBlue-500 bg-opacity-50 backdrop-blur">
-  <div className="flex items-center space-x-3">
-    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-      <img
-        src="src/assets/logo.png"
-        alt="NeuroNest Logo"
-        className="w-12 h-12 rounded-full object-contain"
-      />
-    </div>
-    <h1 className="text-3xl font-serif font-extrabold tracking-wide">NeuroNest</h1>
-  </div>
-  <nav className="space-x-4">
-    <Link
-      to="/register"
-      className="bg-white text-purple-700 font-semibold px-4 py-2 rounded-lg shadow hover:bg-purple-200 transition duration-300"
-    >
-      Register
-    </Link>
-    <Link
-      to="/login"
-      className="bg-transparent border border-white px-4 py-2 rounded-lg hover:bg-white hover:text-purple-800 transition duration-300"
-    >
-      Login
-    </Link>
-  </nav>
-</header>
-
+      <Navbar />
+      
       <main className="max-w-6xl mx-auto px-6 py-12">
         <motion.section 
           initial={{ opacity: 0, y: 40 }} 
