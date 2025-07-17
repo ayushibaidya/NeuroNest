@@ -15,7 +15,7 @@ export default function Navbar() {
       </div>
       <nav className="flex items-center space-x-6">
         <Link to="/" className="text-white hover:text-purple-200 transition">About</Link>
-        <Link Link to="/" className="text-white hover:text-purple-200 transition">Features</Link>
+        <Link to="/" className="text-white hover:text-purple-200 transition">Features</Link>
         <Link to="/" className="text-white hover:text-purple-200 transition">Why NeuroNest?</Link>
      </nav>
       <nav className="space-x-4">

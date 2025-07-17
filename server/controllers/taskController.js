@@ -3,10 +3,10 @@ import Task from '../models/Task.js';
 // CREATE task
 export const createTask = async (req, res) => {
   try {
-    const { userId, title, description, priority, energyRequired } = req.body;
+    const { title, description, priority, energyRequired } = req.body;
 
     const task = new Task({
-      userId,
+      userId: req.user._id,
       title,
       description,
       priority,
@@ -25,12 +25,10 @@ export const createTask = async (req, res) => {
 export const getTasksByUser = async (req, res) => {
   try {
     const { userId } = req.params;
-
-    const tasks = await Task.find({ userId }).sort({ createdAt: -1 });
-    res.status(200).json(tasks);
+    const tasks = await Task.find({ userId });
+    res.status(200).json(tasks); 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch tasks.' });
+    res.status(500).json({ error: 'Failed to fetch tasks' });
   }
 };
 

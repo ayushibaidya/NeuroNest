@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
 
@@ -12,7 +13,9 @@ function App() {
   <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
