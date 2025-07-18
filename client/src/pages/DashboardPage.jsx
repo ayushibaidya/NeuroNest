@@ -8,8 +8,41 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
+  const [selectedEnergyLevel, setSelectedEnergyLevel] = useState(null);
   const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
+
+  const energyOptions = [
+  { label: 'exhausted', emoji: '🥱', value: 1 },
+  { label: 'low',       emoji: '😴', value: 2 },
+  { label: 'moderate',  emoji: '😌', value: 3 },
+  { label: 'high',      emoji: '😃', value: 4 },
+  { label: 'hyper',     emoji: '⚡', value: 5 },
+  ];
+
+   const logEnergy = async () => {
+  if (!selectedEnergyLevel) return alert('Please select an energy level');
+
+  try {
+    await axios.post(
+      'http://localhost:5001/api/mood',
+      {
+        userId: user.id,
+        moodLevel: 3, // placeholder
+        energyLevel: selectedEnergyLevel, // now a number (1–5)
+        note: '',
+        tags: [],
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    alert(`Energy level ${selectedEnergyLevel} logged successfully!`);
+    setSelectedEnergyLevel(null);
+  } catch (err) {
+    console.error('Error logging energy:', err);
+    alert('Failed to log energy level');
+  }
+};
+
 
   useEffect(() => {
     if (!token || !user) return navigate('/login');
@@ -67,39 +100,54 @@ export default function DashboardPage() {
   };
 
   const toggleTaskDone = async (taskId) => {
-  try {
-    const task = tasks.find((t) => t._id === taskId);
-    const updated = await axios.put(
-      `http://localhost:5001/api/tasks/${taskId}`,
-      { isComplete: !task.isComplete }
-    );
-    setTasks((prev) =>
-      prev.map((t) =>
-        t._id === taskId ? { ...t, isComplete: updated.data.isComplete } : t
-      )
-    );
-  } catch (err) {
-    console.error('Error toggling task status:', err);
-  }
-};
+    try {
+      const task = tasks.find((t) => t._id === taskId);
+      const updated = await axios.put(
+        `http://localhost:5001/api/tasks/${taskId}`,
+        { isComplete: !task.isComplete }
+      );
+      setTasks((prev) =>
+        prev.map((t) =>
+          t._id === taskId ? { ...t, isComplete: updated.data.isComplete } : t
+        )
+      );
+    } catch (err) {
+      console.error('Error toggling task status:', err);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-300 to-purple-400 p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+    <div className="min-h-screen bg-gradient-to-b from-pink-300 to-purple-400 p-8 flex flex-col md:flex-row items-center justify-center md:items-center">
       {/* Left Panel */}
-      <div className="flex-1 text-center md:text-left space-y-6">
+      <div className="flex-1 md:max-w-2xl text-center md:text-left space-y-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">Good Morning {user?.username || 'User'}!</h1>
-          <p className="text-lg mt-2">How are you feeling today?</p>
+          <p className="text-lg mt-2">What is your energy level today?</p>
         </div>
 
         <div className="flex justify-center md:justify-start gap-6 text-center">
-          {[1, 2, 3, 4, 5].map((level) => (
-            <div key={level} className="flex flex-col items-center">
-              <span className="text-2xl">{['😞', '😕', '😐', '😊', '😁'][level - 1]}</span>
-              <span className="text-sm text-gray-600">{level}</span>
-            </div>
-          ))}
+            {energyOptions.map(({ label, emoji, value }) => (
+              <button
+                key={label}
+                onClick={() => setSelectedEnergyLevel(value)}
+                className={`flex flex-col items-center transition ${
+                  selectedEnergyLevel === value ? 'scale-110 font-bold' : ''
+                }`}
+              >
+                <span className="text-5xl">{emoji}</span>
+                <span className="text-sm text-gray-600">{label}</span>
+              </button>
+            ))}
         </div>
+
+        {selectedEnergyLevel && (
+          <button
+            onClick={logEnergy}
+            className="mt-4 px-6 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
+          >
+            Confirm Energy Level
+          </button>
+        )}
 
         <div className="flex justify-center md:justify-start gap-4 pt-4">
           <button onClick={() => navigate('/log-mood')} className="flex flex-col items-center justify-center px-6 py-4 bg-white rounded-md shadow-md hover:shadow-lg">
@@ -114,17 +162,17 @@ export default function DashboardPage() {
       </div>
 
       {/* Right Panel */}
-      <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 w-full max-w-sm space-y-4 shadow-lg">
+      <div className="w-full md:w-[340px] bg-white/70 backdrop-blur-md rounded-2xl p-6 space-y-4 shadow-lg">
         <h2 className="text-xl font-semibold">Tasks List</h2>
         <p className="text-sm text-gray-600">Which Task would you like to complete next?</p>
 
-        {/* ✅ Use TaskList component here */}
-          <TaskList
-  tasks={tasks}
-  onDelete={deleteTask}
-  onUpdate={updateTask}
-  onToggleDone={toggleTaskDone}
-/>
+        <TaskList
+          tasks={tasks}
+          onDelete={deleteTask}
+          onUpdate={updateTask}
+          onToggleDone={toggleTaskDone}
+        />
+
         <div className="pt-4 flex gap-2">
           <input
             type="text"
