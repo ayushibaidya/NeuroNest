@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FiLogIn, FiPause } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import TaskList from '../components/TasksList.jsx';
+import { motion } from 'framer-motion';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -126,18 +127,20 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex justify-center md:justify-start gap-6 text-center">
-            {energyOptions.map(({ label, emoji, value }) => (
-              <button
-                key={label}
-                onClick={() => setSelectedEnergyLevel(value)}
-                className={`flex flex-col items-center transition ${
-                  selectedEnergyLevel === value ? 'scale-110 font-bold' : ''
-                }`}
-              >
-                <span className="text-5xl">{emoji}</span>
-                <span className="text-sm text-gray-600">{label}</span>
-              </button>
-            ))}
+          {energyOptions.map((option) => (
+            <motion.button
+              key={option.label}
+              onClick={() => setSelectedEnergyLevel(option.value)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={`flex flex-col items-center transition ${
+                selectedEnergyLevel === option.value ? 'scale-110 font-bold' : ''
+              }`}
+            >
+              <span className="text-5xl">{option.emoji}</span>
+              <span className="text-sm text-gray-600">{option.label}</span>
+            </motion.button>
+          ))}
         </div>
 
         {selectedEnergyLevel && (
@@ -150,9 +153,9 @@ export default function DashboardPage() {
         )}
 
         <div className="flex justify-center md:justify-start gap-4 pt-4">
-          <button onClick={() => navigate('/log-mood')} className="flex flex-col items-center justify-center px-6 py-4 bg-white rounded-md shadow-md hover:shadow-lg">
+          <button onClick={() => navigate('/log-activity')} className="flex flex-col items-center justify-center px-6 py-4 bg-white rounded-md shadow-md hover:shadow-lg">
             <FiLogIn className="text-2xl mb-1" />
-            <span className="text-sm font-medium">Log Mood</span>
+            <span className="text-sm font-medium">Log Activity</span>
           </button>
           <button onClick={() => navigate('/reflect')} className="flex flex-col items-center justify-center px-6 py-4 bg-white rounded-md shadow-md hover:shadow-lg">
             <FiPause className="text-2xl mb-1" />
