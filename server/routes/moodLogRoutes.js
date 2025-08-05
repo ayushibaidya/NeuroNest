@@ -1,9 +1,11 @@
 import express from 'express';
-import { createMoodLog, getMoodLogsByUser } from '../controllers/moodLogController.js';
+import { createMoodLog, getMoodLogsByUser, upsertDailyLog } from '../controllers/moodLogController.js';
 
 const router = express.Router();
 
 router.post('/', createMoodLog);
+
+router.post('/daily', upsertDailyLog); 
 
 router.get('/:userId', getMoodLogsByUser);
 

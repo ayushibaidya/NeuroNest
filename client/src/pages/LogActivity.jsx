@@ -7,42 +7,49 @@ import NotesInput from '../components/NotesInput.jsx';
 
 export default function LogActivity() {
   return (
-     <div className="min-h-screen p-6 bg-gradient-to-b from-pink-400 to-orange-400">
-      <h1 className="text-3xl font-bold mb-6">Log Your Activity</h1>
-      
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row gap-6 mb-6">
-        <div className="w-full md:w-1/3">
-            <div className="bg-white rounded-xl shadow-md p-6 h-full min-h-[200px]">
-                <MoodSelector />
-        </div>
-        </div>
-        <div className="w-full md:w-1/3">
-        <div className="bg-white rounded-xl shadow-md p-6 h-full min-h-[200px]">
-                <DailyActivitySelector />
-        </div>
-        </div>
-        <div className="w-full md:w-1/3">
-        <div className="bg-white rounded-xl shadow-md p-6 h-full min-h-[200px]">
-                <PhysicalActivitySelector />
-        </div>
-        </div>
-      </div>
+    <div className="min-h-screen p-6 bg-[#F1F2EB] text-[#4A4A48]">
+      <h1 className="text-3xl font-bold mb-6 text-[#566246]">Log Your Activity</h1>
 
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row gap-6 mb-6">
+          <div className="w-full md:w-1/3">
+            <div className="bg-[#D8DAD3] rounded-xl shadow-md p-6 h-full min-h-[200px] border border-[#566246]/30">
+              <MoodSelector />
+            </div>
+          </div>
 
-            <div className="w-full md:w-1/3">
-        <WaterIntakeInput />
+          <div className="w-full md:w-1/3">
+            <div className="bg-[#D8DAD3] rounded-xl shadow-md p-6 h-full min-h-[200px] border border-[#566246]/30">
+              <DailyActivitySelector />
             </div>
-            <div className="w-full md:w-1/3">
-        <SleepLogInput />
+          </div>
+
+          <div className="w-full md:w-1/3">
+            <div className="bg-[#D8DAD3] rounded-xl shadow-md p-6 h-full min-h-[200px] border border-[#566246]/30">
+              <PhysicalActivitySelector />
             </div>
-            <div className="w-full md:w-1/3">
-        <NotesInput />
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-6 mb-6">
+          <div className="w-full md:w-1/3">
+            <div className="bg-[#A4C2A5] rounded-xl shadow-md p-6 h-full border border-[#566246]/30">
+              <WaterIntakeInput />
             </div>
-      </div> 
-      </div>
+          </div>
+
+          <div className="w-full md:w-1/3">
+            <div className="bg-[#A4C2A5] rounded-xl shadow-md p-6 h-full border border-[#566246]/30">
+              <SleepLogInput />
+            </div>
+          </div>
+
+          <div className="w-full md:w-1/3">
+            <div className="bg-[#A4C2A5] rounded-xl shadow-md p-6 h-full border border-[#566246]/30">
+              <NotesInput />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

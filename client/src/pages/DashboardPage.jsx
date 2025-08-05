@@ -157,9 +157,9 @@ export default function DashboardPage() {
             <FiLogIn className="text-2xl mb-1" />
             <span className="text-sm font-medium">Log Activity</span>
           </button>
-          <button onClick={() => navigate('/reflect')} className="flex flex-col items-center justify-center px-6 py-4 bg-white rounded-md shadow-md hover:shadow-lg">
+          <button onClick={() => navigate('/meditate')} className="flex flex-col items-center justify-center px-6 py-4 bg-white rounded-md shadow-md hover:shadow-lg">
             <FiPause className="text-2xl mb-1" />
-            <span className="text-sm font-medium">Reflect</span>
+            <span className="text-sm font-medium">Meditate</span>
           </button>
         </div>
       </div>

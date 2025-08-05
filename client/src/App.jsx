@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import LogActivity from './pages/LogActivity.jsx';
 import PrivateRoute from './components/PrivateRoute';
+import MeditatePage from './pages/MeditatePage.jsx';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/log-activity" element={<LogActivity />} />
+        <Route path="/meditate" element={<MeditatePage />} /> 
       </Routes>
     </BrowserRouter>
   );
