@@ -15,3 +15,12 @@
   --color-ultraViolet-800: #474973;
   --color-teaGreen-900: #C5EFCB; 
 }
+
+.animate-glow {
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px #facc15; }
+  to { box-shadow: 0 0 20px #facc15; }
+}

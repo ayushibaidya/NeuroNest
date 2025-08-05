@@ -4,50 +4,55 @@ import { FiLogIn, FiPause } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import TaskList from '../components/TasksList.jsx';
 import { motion } from 'framer-motion';
+import InsightsWidget from '../components/InsightsWidget.jsx';
+import DailyAffirmation from '../components/DailyAffirmation.jsx';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
   const [selectedEnergyLevel, setSelectedEnergyLevel] = useState(null);
-  const user = JSON.parse(localStorage.getItem('user'));
+  const [moodData, setMoodData] = useState([]);
+  const [waterData, setWaterData] = useState([]);
+  const [sleepData, setSleepData] = useState([]);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const token = localStorage.getItem('token');
 
   const energyOptions = [
-  { label: 'exhausted', emoji: '🥱', value: 1 },
-  { label: 'low',       emoji: '😴', value: 2 },
-  { label: 'moderate',  emoji: '😌', value: 3 },
-  { label: 'high',      emoji: '😃', value: 4 },
-  { label: 'hyper',     emoji: '⚡', value: 5 },
+    { label: 'exhausted', emoji: '🥱', value: 1 },
+    { label: 'low', emoji: '😴', value: 2 },
+    { label: 'moderate', emoji: '😌', value: 3 },
+    { label: 'high', emoji: '😃', value: 4 },
+    { label: 'hyper', emoji: '⚡', value: 5 },
   ];
 
-   const logEnergy = async () => {
-  if (!selectedEnergyLevel) return alert('Please select an energy level');
+  const logEnergy = async () => {
+    if (!selectedEnergyLevel) return alert('Please select an energy level');
 
-  try {
-    await axios.post(
-      'http://localhost:5001/api/mood',
-      {
-        userId: user.id,
-        moodLevel: 3, // placeholder
-        energyLevel: selectedEnergyLevel, // now a number (1–5)
-        note: '',
-        tags: [],
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    alert(`Energy level ${selectedEnergyLevel} logged successfully!`);
-    setSelectedEnergyLevel(null);
-  } catch (err) {
-    console.error('Error logging energy:', err);
-    alert('Failed to log energy level');
-  }
-};
-
+    try {
+      await axios.post(
+        'http://localhost:5001/api/mood',
+        {
+          userId: user.id,
+          moodLevel: 3, // placeholder
+          energyLevel: selectedEnergyLevel,
+          note: '',
+          tags: [],
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert(`Energy level ${selectedEnergyLevel} logged successfully!`);
+      setSelectedEnergyLevel(null);
+    } catch (err) {
+      console.error('Error logging energy:', err);
+      alert('Failed to log energy level');
+    }
+  };
 
   useEffect(() => {
     if (!token || !user) return navigate('/login');
     fetchTasks();
+    fetchMoodInsights();
   }, []);
 
   const fetchTasks = async () => {
@@ -59,6 +64,39 @@ export default function DashboardPage() {
       setTasks(res.data);
     } catch (err) {
       console.error('Error fetching tasks:', err);
+    }
+  };
+
+  const fetchMoodInsights = async () => {
+    try {
+      const res = await axios.get(`http://localhost:5001/api/mood/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = res.data;
+      const transformDate = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+      setMoodData(
+        data.map((entry) => ({
+          date: transformDate(entry.date),
+          moodLevel: entry.moodLevel,
+        }))
+      );
+
+      setWaterData(
+        data.map((entry) => ({
+          date: transformDate(entry.date),
+          liters: entry.waterIntake || 0,
+        }))
+      );
+
+      setSleepData(
+        data.map((entry) => ({
+          date: transformDate(entry.date),
+          hours: entry.sleepHours || 0,
+        }))
+      );
+    } catch (err) {
+      console.error('Error fetching insights:', err);
     }
   };
 
@@ -117,16 +155,18 @@ export default function DashboardPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-300 to-purple-400 p-8 flex flex-col md:flex-row items-center justify-center md:items-center">
+ return (
+  <div className="min-h-screen bg-gradient-to-b from-pink-300 to-purple-400 p-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
       {/* Left Panel */}
-      <div className="flex-1 md:max-w-2xl text-center md:text-left space-y-6">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold">Good Morning {user?.username || 'User'}!</h1>
-          <p className="text-lg mt-2">What is your energy level today?</p>
+      <div className="space-y-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-black">Good Morning {user?.username || 'User'}!</h1>
+        <div className="text-xl font-medium text-orange-600 bg-orange-100 rounded-full px-4 py-2 inline-block shadow-sm animate-glow">
+          🔥 You're on a {user.streak}-day streak! Keep it up!
         </div>
+        <p className="text-lg mt-2">What is your energy level today?</p>
 
-        <div className="flex justify-center md:justify-start gap-6 text-center">
+        <div className="flex gap-4 flex-wrap">
           {energyOptions.map((option) => (
             <motion.button
               key={option.label}
@@ -152,7 +192,7 @@ export default function DashboardPage() {
           </button>
         )}
 
-        <div className="flex justify-center md:justify-start gap-4 pt-4">
+        <div className="flex gap-4 pt-4">
           <button onClick={() => navigate('/log-activity')} className="flex flex-col items-center justify-center px-6 py-4 bg-white rounded-md shadow-md hover:shadow-lg">
             <FiLogIn className="text-2xl mb-1" />
             <span className="text-sm font-medium">Log Activity</span>
@@ -164,8 +204,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Right Panel */}
-      <div className="w-full md:w-[340px] bg-white/70 backdrop-blur-md rounded-2xl p-6 space-y-4 shadow-lg">
+      {/* Center Panel - Tasks */}
+      <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 space-y-4 shadow-lg">
         <h2 className="text-xl font-semibold">Tasks List</h2>
         <p className="text-sm text-gray-600">Which Task would you like to complete next?</p>
 
@@ -192,6 +232,17 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Right Panel - Affirmation + Charts */}
+      <div className="space-y-4">
+        <DailyAffirmation />
+        <InsightsWidget
+          moodData={moodData}
+          waterData={waterData}
+          sleepData={sleepData}
+        />
+      </div>
     </div>
-  );
+  </div>
+);
 }

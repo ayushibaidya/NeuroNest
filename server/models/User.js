@@ -11,7 +11,15 @@ const userSchema = new mongoose.Schema({
       default: 'gentle'
     },
     defaultReminderTimes: [{ type: String }]
-  }
+  },
+  streak: {
+    type: Number,
+    default: 0,
+},
+  lastLoggedDate: {
+    type: Date,
+    default: null,
+}
 }, {timestamps: true}); 
 
 export default mongoose.model('User', userSchema); 

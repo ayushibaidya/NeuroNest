@@ -47,6 +47,19 @@ export const upsertDailyLog = async (req, res) => {
       { new: true, upsert: true }
     );
 
+    if (lastLogged === today) {
+    // already logged today, no change
+  } else if (
+    lastLogged &&
+    new Date(today).getTime() - new Date(lastLogged).getTime() === 86400000
+  ) {
+    user.streak += 1;
+  } else {
+    user.streak = 1;
+  }
+  user.lastLoggedDate = new Date();
+  await user.save();
+
     res.status(200).json(updated);
     console.log('Mood log received:', req.body);
   } catch (err) {
